@@ -2,9 +2,20 @@ const SHEET_NAME = "Sheet1"; // Update if your sheet uses a different tab name.
 
 function doPost(e) {
   try {
-    const rawPayload =
-      e.parameter?.data ?? e.postData?.contents ?? "{}";
-    const body = JSON.parse(rawPayload);
+    let body;
+
+    // Handle URL-encoded form data
+    if (e.parameter && e.parameter.data) {
+      body = JSON.parse(decodeURIComponent(e.parameter.data));
+    }
+    // Fallback to raw POST body
+    else if (e.postData && e.postData.contents) {
+      body = JSON.parse(e.postData.contents);
+    }
+    else {
+      throw new Error("No data received");
+    }
+
     const sheet =
       SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
 
@@ -23,11 +34,9 @@ function doPost(e) {
 }
 
 function jsonResponse(payload) {
-  return ContentService.createTextOutput(JSON.stringify(payload))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader("Access-Control-Allow-Origin", "*")
-    .setHeader("Access-Control-Allow-Methods", "POST")
-    .setHeader("Access-Control-Allow-Headers", "Content-Type");
+  const output = ContentService.createTextOutput(JSON.stringify(payload));
+  output.setMimeType(ContentService.MimeType.JSON);
+  return output;
 }
 
 

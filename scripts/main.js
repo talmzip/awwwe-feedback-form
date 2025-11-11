@@ -1,6 +1,9 @@
 import { questions } from "./questions.js";
 import { APP_CONFIG } from "./config.js";
 
+const introScreen = document.getElementById("intro-screen");
+const formScreen = document.getElementById("form-screen");
+const startButton = document.getElementById("start-button");
 const stepContentEl = document.getElementById("step-content");
 const backButton = document.getElementById("back-button");
 const nextButton = document.getElementById("next-button");
@@ -11,6 +14,7 @@ const state = {
   answers: {},
   isTransitioning: false,
   hasSubmitted: false,
+  hasStarted: false,
 };
 
 function init() {
@@ -23,10 +27,20 @@ function init() {
     APP_CONFIG.transitionEase
   );
 
+  startButton.addEventListener("click", handleStart);
   backButton.addEventListener("click", handleBack);
   nextButton.addEventListener("click", handleNext);
 
+  nextButton.setAttribute("aria-label", "Next question");
   displayStatus("", "neutral");
+  updateNavButtons();
+}
+
+function handleStart() {
+  if (state.hasStarted) return;
+  state.hasStarted = true;
+  introScreen.classList.add("intro--hidden");
+  formScreen.classList.remove("form--hidden");
   renderStep();
   updateNavButtons();
 }
@@ -70,7 +84,6 @@ function renderStep() {
   wrapper.append(promptEl, helperEl, inputEl);
   swapContent(wrapper);
 
-  // Move focus after transition for accessibility
   window.requestAnimationFrame(() => {
     setTimeout(() => {
       inputEl.focus();
@@ -109,6 +122,11 @@ function swapContent(newContent) {
 function handleNext() {
   if (state.isTransitioning) return;
 
+  if (!state.hasStarted) {
+    handleStart();
+    return;
+  }
+
   if (state.currentIndex < questions.length - 1) {
     state.currentIndex += 1;
     renderStep();
@@ -137,19 +155,17 @@ function updateNavButtons() {
   backButton.disabled = state.currentIndex === 0 || state.isTransitioning;
 
   if (state.hasSubmitted) {
-    nextButton.textContent = "Start over";
-    nextButton.classList.add("button--secondary");
-    backButton.classList.add("button--hidden");
+    nextButton.setAttribute("aria-label", "Restart survey");
+    backButton.classList.add("link-button--hidden");
     return;
   }
 
-  nextButton.classList.remove("button--secondary");
-  backButton.classList.remove("button--hidden");
+  backButton.classList.remove("link-button--hidden");
 
   if (state.currentIndex === questions.length - 1) {
-    nextButton.textContent = "Submit";
+    nextButton.setAttribute("aria-label", "Submit responses");
   } else {
-    nextButton.textContent = "Next";
+    nextButton.setAttribute("aria-label", "Next question");
   }
 }
 

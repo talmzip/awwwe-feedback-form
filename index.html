@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Survey</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <main class="app">
-      <header class="app__header">
-        <p class="app__eyebrow">Quick check-in</p>
-        <h1 class="app__title">We value your thoughts</h1>
-        <p class="app__subtitle">
-          This short form only takes a minute. Your responses help us improve.
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Survey</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <main class="app">
+    <section id="intro-screen" class="intro" aria-labelledby="intro-title">
+      <div class="intro__content">
+        <h1 id="intro-title" class="intro__title">We value your thoughts</h1>
+        <p class="intro__subtitle">
+          A quick check-in to understand how you're doing today.
         </p>
-      </header>
+      </div>
+      <button id="start-button" class="image-button" type="button">
+        <img src="./assets/JokerSprite2.png" alt="Start survey" class="image-button__image" />
+      </button>
+    </section>
 
-      <section class="form" aria-live="polite">
-        <div class="form__card">
-          <div id="step-content" class="form__step"></div>
+    <section id="form-screen" class="form form--hidden" aria-live="polite">
+      <div class="form__step" id="step-content"></div>
 
-          <footer class="form__footer">
-            <button id="back-button" class="button button--ghost" type="button">
-              Back
-            </button>
-            <button id="next-button" class="button button--primary" type="button">
-              Next
-            </button>
-          </footer>
-        </div>
-        <p id="status-message" class="form__status" role="status" aria-live="polite"></p>
-      </section>
-    </main>
+      <footer class="form__footer">
+        <button id="back-button" class="link-button" type="button">
+          Back
+        </button>
+        <button id="next-button" class="image-button" type="button">
+          <img src="./assets/JokerSprite2.png" alt="Next question" class="image-button__image" />
+        </button>
+      </footer>
+      <p id="status-message" class="form__status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
 
-    <script type="module" src="./scripts/main.js"></script>
-  </body>
+  <script type="module" src="./scripts/main.js"></script>
+</body>
+
 </html>
-
-
