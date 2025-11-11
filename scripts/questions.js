@@ -20,6 +20,24 @@ export const questions = [
     multiline: false,
     placeholder: ".....",
   },
+  {
+    id: "stayConnected",
+    prompt: "would you like to stay connected?",
+    helper: "",
+    type: "choice",
+    options: [
+      { value: "yes", label: "yes" },
+      { value: "no", label: "no" },
+    ],
+  },
+  {
+    id: "email",
+    prompt: "what is your email?",
+    helper: "",
+    multiline: false,
+    placeholder: "name@example.com",
+    showIf: (answers) => answers.stayConnected === "yes",
+  },
 ];
 
 

@@ -38,6 +38,40 @@ function init() {
   showScreen(introScreen);
 }
 
+function getVisibleQuestions() {
+  return questions.filter((question) => {
+    if (typeof question.showIf === "function") {
+      try {
+        return Boolean(question.showIf(state.answers));
+      } catch (error) {
+        console.warn("showIf evaluation failed", question.id, error);
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+function clearHiddenAnswers() {
+  questions.forEach((question) => {
+    if (typeof question.showIf === "function" && !question.showIf(state.answers)) {
+      delete state.answers[question.id];
+    }
+  });
+}
+
+function ensureIndexInRange() {
+  const visible = getVisibleQuestions();
+  if (visible.length === 0) {
+    state.currentIndex = 0;
+    return;
+  }
+
+  if (state.currentIndex >= visible.length) {
+    state.currentIndex = visible.length - 1;
+  }
+}
+
 function showScreen(target) {
   SCREENS.forEach((screen) => {
     if (!screen) return;
@@ -53,15 +87,21 @@ function handleStart() {
   if (state.hasStarted) return;
   state.hasStarted = true;
   showScreen(formScreen);
+  ensureIndexInRange();
   renderStep();
   updateNextButtonLabel();
 }
 
 function renderStep() {
-  const question = questions[state.currentIndex];
+  clearHiddenAnswers();
+  const visibleQuestions = getVisibleQuestions();
+  if (visibleQuestions.length === 0) return;
+
+  ensureIndexInRange();
+  const question = visibleQuestions[state.currentIndex];
   if (!question) return;
 
-  const existingValue = state.answers[question.id] || "";
+  const existingValue = state.answers[question.id] ?? "";
   const inputId = `input-${question.id}`;
 
   const wrapper = document.createElement("div");
@@ -70,37 +110,91 @@ function renderStep() {
   const promptEl = document.createElement("h2");
   promptEl.className = "step__prompt";
   promptEl.textContent = question.prompt;
+  wrapper.appendChild(promptEl);
 
-  const helperEl = document.createElement("p");
-  helperEl.className = "step__helper";
-  helperEl.textContent = question.helper;
-
-  let inputEl;
-  if (question.multiline) {
-    inputEl = document.createElement("textarea");
-    inputEl.rows = 5;
-  } else {
-    inputEl = document.createElement("input");
-    inputEl.type = "text";
+  if (question.helper) {
+    const helperEl = document.createElement("p");
+    helperEl.className = "step__helper";
+    helperEl.textContent = question.helper;
+    wrapper.appendChild(helperEl);
   }
 
-  inputEl.id = inputId;
-  inputEl.name = question.id;
-  inputEl.className = "step__input";
-  inputEl.placeholder = question.placeholder;
-  inputEl.value = existingValue;
-  inputEl.addEventListener("input", (event) => {
-    state.answers[question.id] = event.target.value;
-  });
+  let focusTarget = null;
 
-  wrapper.append(promptEl, helperEl, inputEl);
+  if (question.type === "choice") {
+    const optionsContainer = document.createElement("div");
+    optionsContainer.className = "choice";
+    optionsContainer.setAttribute("role", "radiogroup");
+
+    question.options.forEach((option) => {
+      const optionButton = document.createElement("button");
+      optionButton.type = "button";
+      optionButton.className = "choice__option";
+      optionButton.dataset.value = option.value;
+      optionButton.textContent = option.label;
+
+      if (existingValue === option.value) {
+        optionButton.classList.add("choice__option--selected");
+        optionButton.setAttribute("aria-pressed", "true");
+      } else {
+        optionButton.setAttribute("aria-pressed", "false");
+      }
+
+      optionButton.addEventListener("click", () => {
+        state.answers[question.id] = option.value;
+        markChoiceSelection(optionsContainer, option.value);
+        clearHiddenAnswers();
+        ensureIndexInRange();
+        updateNextButtonLabel();
+      });
+
+      optionsContainer.appendChild(optionButton);
+    });
+
+    wrapper.appendChild(optionsContainer);
+    const selected = optionsContainer.querySelector(".choice__option--selected");
+    focusTarget = selected || optionsContainer.querySelector(".choice__option");
+  } else {
+    const inputEl = question.multiline
+      ? document.createElement("textarea")
+      : document.createElement("input");
+
+    if (!question.multiline) {
+      inputEl.type = "text";
+    }
+
+    inputEl.id = inputId;
+    inputEl.name = question.id;
+    inputEl.className = "step__input";
+    inputEl.placeholder = question.placeholder;
+    inputEl.value = existingValue;
+    inputEl.addEventListener("input", (event) => {
+      state.answers[question.id] = event.target.value;
+    });
+
+    wrapper.appendChild(inputEl);
+    focusTarget = inputEl;
+  }
+
   swapContent(wrapper);
 
   window.requestAnimationFrame(() => {
     setTimeout(() => {
-      inputEl.focus();
-      inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+      if (!focusTarget) return;
+      focusTarget.focus();
+      if (focusTarget.setSelectionRange && focusTarget.value) {
+        const length = focusTarget.value.length;
+        focusTarget.setSelectionRange(length, length);
+      }
     }, APP_CONFIG.transitionDuration);
+  });
+}
+
+function markChoiceSelection(container, value) {
+  container.querySelectorAll(".choice__option").forEach((button) => {
+    const isSelected = button.dataset.value === value;
+    button.classList.toggle("choice__option--selected", isSelected);
+    button.setAttribute("aria-pressed", isSelected ? "true" : "false");
   });
 }
 
@@ -139,18 +233,32 @@ function handleNext() {
     return;
   }
 
-  if (state.currentIndex < questions.length - 1) {
-    state.currentIndex += 1;
-    renderStep();
-    updateNextButtonLabel();
+  clearHiddenAnswers();
+  const visible = getVisibleQuestions();
+
+  if (visible.length === 0) {
+    submitAnswers();
     return;
   }
 
-  submitAnswers();
+  if (state.currentIndex >= visible.length - 1) {
+    submitAnswers();
+    return;
+  }
+
+  state.currentIndex += 1;
+  renderStep();
+  updateNextButtonLabel();
 }
 
 function updateNextButtonLabel() {
-  if (state.currentIndex === questions.length - 1) {
+  const visible = getVisibleQuestions();
+  if (visible.length === 0) {
+    nextButton.setAttribute("aria-label", "Submit responses");
+    return;
+  }
+
+  if (state.currentIndex >= visible.length - 1) {
     nextButton.setAttribute("aria-label", "Submit responses");
   } else {
     nextButton.setAttribute("aria-label", "Next question");
@@ -158,9 +266,11 @@ function updateNextButtonLabel() {
 }
 
 function submitAnswers() {
+  clearHiddenAnswers();
+  const visible = getVisibleQuestions();
   const payload = {
     submittedAt: new Date().toISOString(),
-    answers: questions.map((question) => ({
+    answers: visible.map((question) => ({
       id: question.id,
       prompt: question.prompt,
       value: state.answers[question.id] ?? "",
