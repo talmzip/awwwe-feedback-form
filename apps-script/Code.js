@@ -21,9 +21,11 @@ function doPost(e) {
 }
 
 function jsonResponse(payload) {
-  return ContentService.createTextOutput(
-    JSON.stringify(payload)
-  ).setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(payload))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader("Access-Control-Allow-Origin", "*")
+    .setHeader("Access-Control-Allow-Methods", "POST")
+    .setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
 

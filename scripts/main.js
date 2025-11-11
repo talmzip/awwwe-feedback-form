@@ -179,7 +179,7 @@ function submitAnswers() {
   fetch(url, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "text/plain;charset=utf-8",
     },
     body: JSON.stringify(payload),
   })
@@ -187,9 +187,22 @@ function submitAnswers() {
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-      return response.json().catch(() => ({}));
+      return response.text();
     })
-    .then(() => {
+    .then((bodyText) => {
+      let data = {};
+      if (bodyText) {
+        try {
+          data = JSON.parse(bodyText);
+        } catch (error) {
+          console.warn("Unable to parse response JSON", error);
+        }
+      }
+
+      if (data.status !== "ok") {
+        throw new Error(data.message || "Unknown error");
+      }
+
       displayStatus("Thanks! Your responses are on their way.", "success");
       state.hasSubmitted = true;
       toggleButtons(false);
