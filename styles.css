@@ -31,9 +31,29 @@ body {
 }
 
 .app {
+  position: relative;
   width: min(720px, 100%);
-  display: grid;
-  gap: clamp(2.5rem, 7vw, 4rem);
+  min-height: clamp(520px, 70vh, 640px);
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity var(--transition-duration) var(--transition-ease),
+    transform var(--transition-duration) var(--transition-ease);
+  overflow-y: auto;
+}
+
+.screen--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(12px);
 }
 
 .intro {
@@ -107,10 +127,7 @@ body {
 .form {
   display: grid;
   gap: clamp(2rem, 6vw, 3rem);
-}
-
-.screen--hidden {
-  display: none !important;
+  padding: clamp(2rem, 6vw, 3rem);
 }
 
 .form__step {
@@ -122,6 +139,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  margin-top: clamp(1rem, 3vw, 1.75rem);
 }
 
 .form__status {
@@ -190,6 +208,7 @@ body {
   gap: 1.5rem;
   justify-items: center;
   text-align: center;
+  place-content: center;
 }
 
 .loading-screen__text {
