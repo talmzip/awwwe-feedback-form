@@ -14,33 +14,47 @@
 <body>
   <main class="app">
     <section id="intro-screen" class="intro" aria-labelledby="intro-title">
+      <div class="intro__visual" aria-hidden="true">
+        <img src="./assets/Icon_White_small.png" alt="" class="intro__visual-image" />
+      </div>
       <div class="intro__content">
         <h1 id="intro-title" class="intro__title">
           you’ve just returned.<br />
           <br />
           but maybe something stayed with you.
         </h1>
-        <p class="intro__subtitle">
-          What was it?
-        </p>
+        <p class="intro__subtitle">what was it?</p>
       </div>
       <button id="start-button" class="image-button" type="button">
         <img src="./assets/JokerSprite2.png" alt="Start survey" class="image-button__image" />
       </button>
+      <p class="image-button__caption">touch to continue</p>
     </section>
 
-    <section id="form-screen" class="form form--hidden" aria-live="polite">
+    <section id="form-screen" class="form screen--hidden" aria-live="polite">
       <div class="form__step" id="step-content"></div>
 
       <footer class="form__footer">
-        <button id="back-button" class="link-button" type="button">
-          Back
-        </button>
         <button id="next-button" class="image-button" type="button">
           <img src="./assets/JokerSprite2.png" alt="Next question" class="image-button__image" />
         </button>
       </footer>
       <p id="status-message" class="form__status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="loading-screen" class="loading-screen screen--hidden" aria-live="polite">
+      <p class="loading-screen__text">sending your words...</p>
+    </section>
+
+    <section id="ending-screen" class="ending screen--hidden" aria-live="polite">
+      <div class="ending__content">
+        <h2 class="ending__title">thank you.</h2>
+        <p class="ending__subtitle">we’re holding your reflections with care.</p>
+      </div>
+      <button id="restart-button" class="image-button" type="button">
+        <img src="./assets/JokerSprite2.png" alt="Share another thought" class="image-button__image" />
+      </button>
+      <p class="image-button__caption">share another reflection</p>
     </section>
   </main>
 

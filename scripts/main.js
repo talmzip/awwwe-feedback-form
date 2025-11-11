@@ -3,18 +3,22 @@ import { APP_CONFIG } from "./config.js";
 
 const introScreen = document.getElementById("intro-screen");
 const formScreen = document.getElementById("form-screen");
+const loadingScreen = document.getElementById("loading-screen");
+const endingScreen = document.getElementById("ending-screen");
 const startButton = document.getElementById("start-button");
+const restartButton = document.getElementById("restart-button");
 const stepContentEl = document.getElementById("step-content");
-const backButton = document.getElementById("back-button");
 const nextButton = document.getElementById("next-button");
 const statusMessageEl = document.getElementById("status-message");
+
+const SCREENS = [introScreen, formScreen, loadingScreen, endingScreen];
 
 const state = {
   currentIndex: 0,
   answers: {},
   isTransitioning: false,
-  hasSubmitted: false,
   hasStarted: false,
+  hasSubmitted: false,
 };
 
 function init() {
@@ -28,21 +32,33 @@ function init() {
   );
 
   startButton.addEventListener("click", handleStart);
-  backButton.addEventListener("click", handleBack);
+  if (restartButton) {
+    restartButton.addEventListener("click", resetForm);
+  }
   nextButton.addEventListener("click", handleNext);
 
   nextButton.setAttribute("aria-label", "Next question");
   displayStatus("", "neutral");
-  updateNavButtons();
+  showScreen(introScreen);
+}
+
+function showScreen(target) {
+  SCREENS.forEach((screen) => {
+    if (!screen) return;
+    if (screen === target) {
+      screen.classList.remove("screen--hidden");
+    } else {
+      screen.classList.add("screen--hidden");
+    }
+  });
 }
 
 function handleStart() {
   if (state.hasStarted) return;
   state.hasStarted = true;
-  introScreen.classList.add("intro--hidden");
-  formScreen.classList.remove("form--hidden");
+  showScreen(formScreen);
   renderStep();
-  updateNavButtons();
+  updateNextButtonLabel();
 }
 
 function renderStep() {
@@ -130,38 +146,14 @@ function handleNext() {
   if (state.currentIndex < questions.length - 1) {
     state.currentIndex += 1;
     renderStep();
-    updateNavButtons();
-    return;
-  }
-
-  if (state.hasSubmitted) {
-    resetForm();
+    updateNextButtonLabel();
     return;
   }
 
   submitAnswers();
 }
 
-function handleBack() {
-  if (state.isTransitioning) return;
-  if (state.currentIndex === 0) return;
-
-  state.currentIndex -= 1;
-  renderStep();
-  updateNavButtons();
-}
-
-function updateNavButtons() {
-  backButton.disabled = state.currentIndex === 0 || state.isTransitioning;
-
-  if (state.hasSubmitted) {
-    nextButton.setAttribute("aria-label", "Restart survey");
-    backButton.classList.add("link-button--hidden");
-    return;
-  }
-
-  backButton.classList.remove("link-button--hidden");
-
+function updateNextButtonLabel() {
   if (state.currentIndex === questions.length - 1) {
     nextButton.setAttribute("aria-label", "Submit responses");
   } else {
@@ -182,6 +174,7 @@ function submitAnswers() {
   const url = APP_CONFIG.submitUrl;
 
   if (!url || url.includes("YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL")) {
+    showScreen(formScreen);
     displayStatus(
       "Set your Google Apps Script web app URL in `scripts/config.js` to enable submissions.",
       "error"
@@ -190,7 +183,8 @@ function submitAnswers() {
   }
 
   toggleButtons(true);
-  displayStatus("Sending your responses...", "info");
+  displayStatus("", "neutral");
+  showScreen(loadingScreen);
 
   const formData = new URLSearchParams();
   formData.append("data", JSON.stringify(payload));
@@ -221,13 +215,13 @@ function submitAnswers() {
         throw new Error(parsed.message || "Unknown error");
       }
 
-      displayStatus("Thanks! Your responses are on their way.", "success");
       state.hasSubmitted = true;
       toggleButtons(false);
-      updateNavButtons();
+      showScreen(endingScreen);
     })
     .catch((error) => {
       console.error(error);
+      showScreen(formScreen);
       displayStatus(
         "Something went wrong sending your responses. Please try again.",
         "error"
@@ -238,21 +232,27 @@ function submitAnswers() {
 
 function displayStatus(message, tone) {
   statusMessageEl.textContent = message;
-  statusMessageEl.dataset.tone = tone;
+  if (!message) {
+    statusMessageEl.removeAttribute("data-tone");
+  } else {
+    statusMessageEl.dataset.tone = tone;
+  }
 }
 
 function toggleButtons(disabled) {
-  backButton.disabled = disabled || state.currentIndex === 0;
   nextButton.disabled = disabled;
 }
 
 function resetForm() {
   state.currentIndex = 0;
   state.answers = {};
+  state.hasStarted = false;
   state.hasSubmitted = false;
+  state.isTransitioning = false;
+  stepContentEl.innerHTML = "";
   displayStatus("", "neutral");
-  renderStep();
-  updateNavButtons();
+  showScreen(introScreen);
+  updateNextButtonLabel();
 }
 
 document.addEventListener("DOMContentLoaded", init);
