@@ -183,24 +183,26 @@ function submitAnswers() {
     method: "POST",
     body: formData,
   })
-    .then((response) => {
+    .then(async (response) => {
+      const bodyText = await response.text();
+
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        throw new Error(
+          `Request failed with status ${response.status}: ${bodyText}`
+        );
       }
-      return response.text();
-    })
-    .then((bodyText) => {
-      let data = {};
+
+      let parsed;
       if (bodyText) {
         try {
-          data = JSON.parse(bodyText);
+          parsed = JSON.parse(bodyText);
         } catch (error) {
-          console.warn("Unable to parse response JSON", error);
+          console.warn("Unable to parse response JSON", error, bodyText);
         }
       }
 
-      if (data.status !== "ok") {
-        throw new Error(data.message || "Unknown error");
+      if (parsed && parsed.status && parsed.status !== "ok") {
+        throw new Error(parsed.message || "Unknown error");
       }
 
       displayStatus("Thanks! Your responses are on their way.", "success");
