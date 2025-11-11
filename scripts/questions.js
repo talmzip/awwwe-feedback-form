@@ -1,24 +1,24 @@
 export const questions = [
   {
-    id: "name",
-    prompt: "What is your name?",
-    helper: "Feel free to include your preferred pronouns.",
-    multiline: false,
-    placeholder: "Jane Doe",
+    id: "memory",
+    prompt: "a feeling, color, image that stayed?",
+    helper: "",
+    multiline: true,
+    placeholder: "whatever comes first to mind.....",
   },
   {
-    id: "feelings",
-    prompt: "How do you feel today?",
-    helper: "Share a few words about your mood or energy.",
+    id: "similarities",
+    prompt: "did it remind you of something?",
+    helper: "",
     multiline: true,
-    placeholder: "I'm feeling...",
+    placeholder: "i felt this way when.....",
   },
   {
     id: "additional",
-    prompt: "Anything you'd like to add?",
-    helper: "Observations, requests, shout-outs—whatever comes to mind.",
+    prompt: "anything you want to add?",
+    helper: "",
     multiline: true,
-    placeholder: "Additional notes...",
+    placeholder: ".....",
   },
 ];
 
