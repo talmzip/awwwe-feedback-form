@@ -28,6 +28,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 2.75rem);
+  overflow-x: hidden;
 }
 
 .app {
@@ -47,6 +48,7 @@ body {
     opacity var(--transition-duration) var(--transition-ease),
     transform var(--transition-duration) var(--transition-ease);
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .screen--hidden {
