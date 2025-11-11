@@ -6,7 +6,6 @@ const formScreen = document.getElementById("form-screen");
 const loadingScreen = document.getElementById("loading-screen");
 const endingScreen = document.getElementById("ending-screen");
 const startButton = document.getElementById("start-button");
-const restartButton = document.getElementById("restart-button");
 const stepContentEl = document.getElementById("step-content");
 const nextButton = document.getElementById("next-button");
 const statusMessageEl = document.getElementById("status-message");
@@ -32,9 +31,6 @@ function init() {
   );
 
   startButton.addEventListener("click", handleStart);
-  if (restartButton) {
-    restartButton.addEventListener("click", resetForm);
-  }
   nextButton.addEventListener("click", handleNext);
 
   nextButton.setAttribute("aria-label", "Next question");
