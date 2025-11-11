@@ -141,7 +141,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin-top: clamp(0.5rem, 2vw, 0.9rem);
+  margin-top: clamp(0.15rem, 0.6vw, 0.27rem);
 }
 
 .form__status {
