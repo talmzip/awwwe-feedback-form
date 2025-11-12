@@ -11,7 +11,11 @@ const outroNextButton = document.getElementById("outro-next-button");
 const finalButton = document.getElementById("final-button");
 const stepContentEl = document.getElementById("step-content");
 const nextButton = document.getElementById("next-button");
+const nextButtonImage = nextButton?.querySelector(".image-button__image");
 const statusMessageEl = document.getElementById("status-message");
+
+const PRIMARY_BUTTON_SRC = "./assets/JokerSprite2.png";
+const FOLLOW_UP_BUTTON_SRC = "./assets/JokerSprite2_red.png";
 
 const SCREENS = [introScreen, formScreen, loadingScreen, endingScreen, finalScreen];
 const BASE_IDS = baseQuestions.map((question) => question.id);
@@ -37,12 +41,19 @@ function init() {
     APP_CONFIG.transitionEase
   );
 
+  if (nextButtonImage) {
+    nextButtonImage.src = PRIMARY_BUTTON_SRC;
+  }
+
   startButton.addEventListener("click", handleStart);
   nextButton.addEventListener("click", handleNext);
   if (outroNextButton) {
     outroNextButton.addEventListener("click", handleOutroContinue);
   }
   if (finalButton) {
+    if (finalButton.querySelector(".image-button__image")) {
+      finalButton.querySelector(".image-button__image").src = FOLLOW_UP_BUTTON_SRC;
+    }
     finalButton.addEventListener("click", beginFollowUpFlow);
   }
 
@@ -322,6 +333,10 @@ function beginFollowUpFlow() {
   state.isTransitioning = false;
   state.hasStarted = true;
 
+  if (nextButtonImage) {
+    nextButtonImage.src = FOLLOW_UP_BUTTON_SRC;
+  }
+
   FOLLOW_UP_IDS.forEach((id) => {
     delete state.answers[id];
   });
@@ -466,6 +481,10 @@ function showFinalCompletionScreen() {
     return;
   }
 
+  if (nextButtonImage) {
+    nextButtonImage.src = PRIMARY_BUTTON_SRC;
+  }
+
   finalScreen.classList.add("final--complete");
   finalScreen.classList.remove("final--active");
   showScreen(finalScreen);
@@ -499,6 +518,9 @@ function resetForm() {
   stepContentEl.innerHTML = "";
   displayStatus("", "neutral");
   toggleButtons(false);
+  if (nextButtonImage) {
+    nextButtonImage.src = PRIMARY_BUTTON_SRC;
+  }
   if (finalScreen) {
     finalScreen.classList.remove("final--complete");
     finalScreen.classList.remove("final--active");

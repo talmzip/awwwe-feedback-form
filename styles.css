@@ -10,12 +10,17 @@
   --font-family: "M PLUS 1p", "Hepta Slab", serif;
   --transition-duration: 400ms;
   --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
-  --follow-up-prompt-color: #ffffff;
+  --follow-up-prompt-color: #c3bebe;
   --follow-up-helper-color: rgba(255, 255, 255, 0.7);
-  --follow-up-input-color: #dbdbdb;
+  --follow-up-input-color: #dc0505;
   --follow-up-option-background: rgb(0, 0, 0);
-  --follow-up-option-selected-color: #000000;
-  --follow-up-option-selected-background: rgba(32, 32, 32, 0.9);
+  --follow-up-option-color: #bd0404;
+  --follow-up-option-selected-color: #ffffff;
+  --follow-up-option-selected-background: rgba(47, 47, 47, 0.9);
+  --follow-up-option-border: rgb(0, 0, 0);
+  --follow-up-option-selected-border: rgba(19, 19, 19, 0.92);
+  --follow-up-flicker-duration: 2.5s;
+  --follow-up-flicker-curve: steps(1, end);
 }
 
 *,
@@ -350,7 +355,7 @@ body {
 
 .final.final--active .image-button__image {
   animation:
-    finalReveal 2.6s linear forwards,
+    finalReveal 4s linear forwards,
     buttonFlicker 2.5s steps(1, end) infinite 1.4s;
 }
 
@@ -461,12 +466,18 @@ body {
 .follow-up .choice__option {
   font-family: "Micro 5", "M PLUS 1p", sans-serif;
   background: var(--follow-up-option-background);
-  color: var(--follow-up-input-color);
+  color: var(--follow-up-option-color);
+  border-color: var(--follow-up-option-border);
 }
 
 .follow-up .choice__option--selected {
   color: var(--follow-up-option-selected-color);
   background: var(--follow-up-option-selected-background);
+  border-color: var(--follow-up-option-selected-border);
+}
+
+.follow-up .image-button__image {
+  animation: buttonFlicker 1.4s steps(2, end) infinite;
 }
 
 @media (max-width: 640px) {
