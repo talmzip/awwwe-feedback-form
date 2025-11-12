@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Hepta+Slab:wght@100..900&family=M+PLUS+1p:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Coral+Pixels&family=Hepta+Slab:wght@100..900&family=M+PLUS+1p&family=Micro+5&display=swap"
     rel="stylesheet" />
 </head>
 
@@ -30,7 +30,7 @@
       <button id="start-button" class="image-button" type="button">
         <img src="./assets/JokerSprite2.png" alt="Start survey" class="image-button__image" />
       </button>
-      <p class="image-button__caption">אפשר לענות בעברית</p>
+      <p class="image-button__caption">נגיעה בפרצוף להתחלה<br />אפשר לענות בעברית</p>
     </section>
 
     <section id="form-screen" class="screen form screen--hidden" aria-live="polite">
@@ -45,7 +45,7 @@
     </section>
 
     <section id="loading-screen" class="screen loading-screen screen--hidden" aria-live="polite">
-      <p class="loading-screen__text">hold on there...</p>
+      <p class="loading-screen__text">HOLD ON THERE...</p>
     </section>
 
     <section id="ending-screen" class="screen ending screen--hidden" aria-live="polite">
@@ -54,7 +54,18 @@
       </div>
       <div class="ending__content">
         <h2 class="ending__title">thank you.</h2>
+        <a class="ending__link" href="https://www.instagram.com/awwwe_vr/" target="_blank"
+          rel="noopener noreferrer">@awwwe</a>
       </div>
+      <button id="outro-next-button" class="image-button" type="button">
+        <img src="./assets/JokerSprite2.png" alt="Continue" class="image-button__image" />
+      </button>
+    </section>
+
+    <section id="final-screen" class="screen final screen--hidden" aria-live="polite">
+      <button id="final-button" class="image-button" type="button">
+        <img src="./assets/JokerSprite2.png" alt="Next" class="image-button__image" />
+      </button>
     </section>
   </main>
 

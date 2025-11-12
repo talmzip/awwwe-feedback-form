@@ -1,4 +1,4 @@
-export const questions = [
+export const baseQuestions = [
   {
     id: "memory",
     prompt: "a feeling, color, image that stayed?",
@@ -39,5 +39,28 @@ export const questions = [
     showIf: (answers) => answers.stayConnected === "yes",
   },
 ];
+
+export const followUpQuestions = [
+  {
+    id: "wantMore",
+    prompt: "do you want more?",
+    helper: "",
+    type: "choice",
+    options: [
+      { value: "yes", label: "yes" },
+      { value: "no", label: "no" },
+    ],
+  },
+  {
+    id: "wantMoreDetail",
+    prompt: "what is it that you want?",
+    helper: "",
+    multiline: true,
+    placeholder: "tell us more...",
+    showIf: (answers) => answers.wantMore === "yes",
+  },
+];
+
+export const questions = [...baseQuestions, ...followUpQuestions];
 
 
