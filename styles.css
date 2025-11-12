@@ -211,6 +211,7 @@ body {
 
 .form__step {
   width: min(520px, 100%);
+  min-height: clamp(280px, 40vw, 340px);
 }
 
 .form__footer {
