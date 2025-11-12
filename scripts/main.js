@@ -29,6 +29,7 @@ const state = {
   hasSubmitted: false,
   isFollowUp: false,
   lastScreen: introScreen,
+  skipAnimations: false,
 };
 
 function init() {
@@ -149,6 +150,7 @@ function renderStep() {
 
   const wrapper = document.createElement("div");
   wrapper.className = "step";
+  wrapper.style.opacity = "1";
 
   const promptEl = document.createElement("h2");
   promptEl.className = "step__prompt";
@@ -242,29 +244,38 @@ function markChoiceSelection(container, value) {
 }
 
 function swapContent(newContent) {
-  if (state.isTransitioning) return;
-  state.isTransitioning = true;
-
-  const previous = stepContentEl.firstElementChild;
-  if (previous) {
-    previous.classList.add("step--fade-out");
-  }
-
-  const handleTransitionEnd = () => {
+  if (state.skipAnimations) {
+    const previous = stepContentEl.firstElementChild;
     if (previous) {
       stepContentEl.removeChild(previous);
     }
-    newContent.classList.add("step--fade-in");
     stepContentEl.appendChild(newContent);
-    state.isTransitioning = false;
+    state.skipAnimations = false;
+    return;
+  }
+
+  const previous = stepContentEl.firstElementChild;
+  const next = newContent;
+  next.classList.add("step--fade-in");
+
+  const insertNext = () => {
+    if (previous && previous.parentNode === stepContentEl) {
+      previous.remove();
+    }
+    stepContentEl.appendChild(next);
   };
 
   if (previous) {
-    previous.addEventListener("animationend", handleTransitionEnd, {
-      once: true,
-    });
+    previous.classList.add("step--fade-out");
+    previous.addEventListener(
+      "animationend",
+      () => {
+        insertNext();
+      },
+      { once: true }
+    );
   } else {
-    handleTransitionEnd();
+    insertNext();
   }
 }
 
@@ -342,6 +353,7 @@ function beginFollowUpFlow() {
   });
 
   state.currentIndex = 0;
+  state.skipAnimations = true;
 
   toggleButtons(false);
   displayStatus("", "neutral");
@@ -515,6 +527,7 @@ function resetForm() {
   state.hasSubmitted = false;
   state.isTransitioning = false;
   state.isFollowUp = false;
+  state.skipAnimations = false;
   stepContentEl.innerHTML = "";
   displayStatus("", "neutral");
   toggleButtons(false);

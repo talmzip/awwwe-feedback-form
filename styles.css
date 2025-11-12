@@ -16,7 +16,7 @@
   --follow-up-option-background: rgb(0, 0, 0);
   --follow-up-option-color: #bd0404;
   --follow-up-option-selected-color: #ffffff;
-  --follow-up-option-selected-background: rgba(47, 47, 47, 0.9);
+  --follow-up-option-selected-background: rgba(54, 18, 18, 0.9);
   --follow-up-option-border: rgb(0, 0, 0);
   --follow-up-option-selected-border: rgba(19, 19, 19, 0.92);
   --follow-up-flicker-duration: 2.5s;
@@ -211,7 +211,7 @@ body {
 
 .form__step {
   width: min(520px, 100%);
-  min-height: clamp(280px, 40vw, 340px);
+  min-height: clamp(320px, 45vw, 380px);
 }
 
 .form__footer {
@@ -478,7 +478,12 @@ body {
 }
 
 .follow-up .image-button__image {
-  animation: buttonFlicker 1.4s steps(2, end) infinite;
+  animation: buttonFlicker var(--follow-up-flicker-duration) var(--follow-up-flicker-curve) infinite;
+  transform: scale(0.7);
+}
+
+.follow-up .form {
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {
