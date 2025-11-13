@@ -317,6 +317,12 @@ body {
   justify-items: center;
 }
 
+.ending__social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .ending__title {
   margin: 0;
   font-size: clamp(1rem, 3vw, 1.4rem);
@@ -534,4 +540,9 @@ body {
   animation: none;
   opacity: 1;
   transform: scale(1);
+}
+
+.ending__icon {
+  display: inline-flex;
+  color: rgba(255, 255, 255, 0.7);
 }
