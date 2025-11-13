@@ -351,6 +351,18 @@ body {
   background: var(--background);
 }
 
+.final__message {
+  display: none;
+}
+
+.final__logo {
+  width: clamp(60px, 15vw, 110px);
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 .final.final--complete .image-button {
   display: none;
 }
@@ -358,6 +370,10 @@ body {
 .final.final--complete .image-button__image {
   animation: none;
   opacity: 0;
+}
+
+.final.final--complete .final__message {
+  display: block;
 }
 
 .final.final--active .image-button__image {

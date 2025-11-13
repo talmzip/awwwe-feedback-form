@@ -13,6 +13,7 @@ const stepContentEl = document.getElementById("step-content");
 const nextButton = document.getElementById("next-button");
 const nextButtonImage = nextButton?.querySelector(".image-button__image");
 const statusMessageEl = document.getElementById("status-message");
+const followUpAudio = document.getElementById("followup-audio");
 
 const PRIMARY_BUTTON_SRC = "./assets/JokerSprite2.png";
 const FOLLOW_UP_BUTTON_SRC = "./assets/JokerSprite2_red.png";
@@ -360,6 +361,7 @@ function beginFollowUpFlow() {
   showScreen(formScreen);
   renderStep();
   updateNextButtonLabel();
+  playFollowUpAudio();
 }
 
 function submitAnswers() {
@@ -538,8 +540,26 @@ function resetForm() {
     finalScreen.classList.remove("final--complete");
     finalScreen.classList.remove("final--active");
   }
+  stopFollowUpAudio();
   showScreen(introScreen);
   updateNextButtonLabel();
+}
+
+function playFollowUpAudio() {
+  if (!followUpAudio) return;
+  followUpAudio.currentTime = 0;
+  const playPromise = followUpAudio.play();
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {
+      /* ignore autoplay restrictions */
+    });
+  }
+}
+
+function stopFollowUpAudio() {
+  if (!followUpAudio) return;
+  followUpAudio.pause();
+  followUpAudio.currentTime = 0;
 }
 
 document.addEventListener("DOMContentLoaded", init);
